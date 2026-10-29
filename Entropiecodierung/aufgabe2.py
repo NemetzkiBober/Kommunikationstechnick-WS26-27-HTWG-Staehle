@@ -52,9 +52,37 @@ def main() -> None:
         
     print("Entropy:", {k: round(v, 4) for k, v in entropie.items()})
 
+    # --- Grafische Darstellung ---
+    labels = list(sortedDictionary.keys())
+    freqs = list(sortedDictionary.values())
+    infos = [informationsgehalt[k] for k in labels]
+
+    x = np.arange(len(labels))
+    width = 0.35
+
+    fig, ax1 = plt.subplots(figsize=(10, 6))
+
+    color1 = 'tab:blue'
+    ax1.set_xlabel('Zeichen (absteigende Wahrscheinlichkeit)')
+    ax1.set_ylabel('Häufigkeit (Anzahl)', color=color1)
+    ax1.bar(x - width/2, freqs, width, label='Häufigkeit', color=color1)
+    ax1.tick_params(axis='y', labelcolor=color1)
+    ax1.set_xticks(x)
+    ax1.set_xticklabels(labels)
+
+    ax2 = ax1.twinx()
+    color2 = 'tab:red'
+    ax2.set_ylabel('Informationsgehalt (Bit)', color=color2)
+    ax2.bar(x + width/2, infos, width, label='Informationsgehalt', color=color2)
+    ax2.tick_params(axis='y', labelcolor=color2)
+
+    plt.title('Häufigkeit und Informationsgehalt der Zeichen')
+    fig.tight_layout()
+    plt.show()
+
 if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\n[!] AusfÃ¼hrung abgebrochen (SIGINT). Beende Prozess...")
+        print("\n[!] Ausführung abgebrochen (SIGINT). Beende Prozess...")
         sys.exit(130)
