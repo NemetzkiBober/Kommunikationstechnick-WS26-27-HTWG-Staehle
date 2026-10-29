@@ -1,7 +1,5 @@
 import sys
 import math
-import random
-import matplotlib.pyplot as plt
 
 def shannon(probabilities):
     codeDictionary = {}
@@ -116,11 +114,17 @@ class Code:
                 current_code = ""
         return word
 
+def print_codes(codeDictionary):
+    print("\n" + "=" * 30)
+    print(f"{'Buchstabe':<12}{'Binärcode':<12}")
+    print("-" * 30)
+    for char, code in codeDictionary.items():
+        print(f"{char:<12}{code:<12}")
+    print("=" * 30)
+
+
 def main() -> None:
-    with open("rfc2324.txt", "r", encoding="utf-8") as file:
-        text = file.read()
-        
-    Hardcoded_Word = text
+    Hardcoded_Word = "HOCHSCHULE"
     readDictionary = {}
     
     for char in Hardcoded_Word:
@@ -135,26 +139,26 @@ def main() -> None:
     for i in sortedDictionary:
         probabilities[i] = sortedDictionary[i] / len(Hardcoded_Word)
 
+    print("Probabilities Nachrichtenquelle:", {k: round(v, 4) for k, v in probabilities.items()})
+
     shannon_code = Code(probabilities, shannon)
 
-    shannon_lens = []
+    print_codes(shannon_code.codeDictionary)
+    print(f"Quelle - Mittlere Codewortlänge: {shannon_code.mittlere_codewortlaenge:.4f} Bits")
+    print(f"Quelle - Redundanz: {shannon_code.redundanz:.4f} Bits\n")
 
-    # 10x Durchläufe analog zum Vorbild
-    for i in range(10):
-        wort = "".join(random.choices(text, k=1000))
-        # shannon_code.encode(wort) gibt (code, av_char_length, redundancy) zurück; wir nehmen Element [0]
-        shannon_lens.append(len(shannon_code.encode(wort)[0]))
+    test_words = ["HHHHH", "EEEEE"]
+    
+    for word in test_words:
+        encoded_bits, av_char_len, word_redundancy = shannon_code.encode(word)
+        decoded_word = shannon_code.decode(encoded_bits)
+        
+        print(f"--- Test für Wort: '{word}' ---")
+        print(f"Binärcode:       {encoded_bits}")
+        print(f"Dekodiert:       {decoded_word} (Erfolgreich: {decoded_word == word})")
+        print(f"Mittlere Bits/Z: {av_char_len:.4f}")
+        print(f"Wort-Redundanz:  {word_redundancy:.4f}\n")
 
-    # Plot erstellen
-    fig, ax = plt.subplots(figsize=(8, 5))
-
-    ax.bar(range(1, 11), shannon_lens, color='skyblue')
-    ax.set_title("Shannon-Fano")
-    ax.set_xlabel("Durchlauf")
-    ax.set_ylabel("Codierungslänge")
-
-    plt.tight_layout()
-    plt.show()
 
 if __name__ == "__main__":
     try:
