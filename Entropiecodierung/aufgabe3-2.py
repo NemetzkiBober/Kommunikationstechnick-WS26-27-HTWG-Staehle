@@ -26,7 +26,7 @@ def shannon(probabilities):
         pivot = None
         lastpivot = None
         for i in dictionary:
-            prob = round(dictionary[i] + prob, 4)
+            prob = round(dictionary[i] + prob, 20)
             if prob == 0:
                 break
             if prob >= fullprob / 2:
