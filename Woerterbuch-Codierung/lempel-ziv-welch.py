@@ -2,7 +2,7 @@ import sys
 
 class lempelZivWelch:
     def __init__(self):
-        TerminalInput = 0
+        TerminalInput = 1
         HardcodedWord = "FISCHERSFRITZFISCHTFRISCHEFISCHE"
         
         if TerminalInput:
@@ -18,10 +18,6 @@ class lempelZivWelch:
 
 
         def encode(message, CharL):
-            """
-            Implements LZW encoding strictly using the provided CharL list.
-            Includes a simple, readable print trace without complex formatting logic.
-            """
             encoded_data = []
             current_sequence = ""
             
@@ -29,29 +25,34 @@ class lempelZivWelch:
                 combined = current_sequence + char
                 
                 if combined in CharL:
-                    # Sequence exists in the list, extend it
+
                     current_sequence = combined
                 else:
-                    # Output the list index for the known sequence
-                    code = CharL.index(current_sequence)
+
+                    if len(current_sequence) == 1:
+                        code = current_sequence
+                    else:
+                        code = f"<{CharL.index(current_sequence)}>"
+
+
                     encoded_data.append(code)
                     
-                    # Add new combined sequence to the external state list
                     CharL.append(combined) 
                     
-                    # Simple trace output
                     print(f"Zeichen: {current_sequence: <5} | Code: {code: <3} | Neues Wortbuch-Element: {combined} (Index: {len(CharL)-1})")
                     
-                    # Reset the current sequence to the unmatched character
                     current_sequence = char
                     
-            # Flush the final remaining sequence buffer
             if current_sequence:
-                code = CharL.index(current_sequence)
+                if len(current_sequence) == 1:
+                    code = current_sequence
+                else:
+                    code = f"<{CharL.index(current_sequence)}>"
+
                 encoded_data.append(code)
                 print(f"Zeichen: {current_sequence: <5} | Code: {code: <3} | (Ende der Nachricht)")
                 
-            return encoded_data
+            return "".join(encoded_data)
 
         # def decode(bitstring,CharL):
         
