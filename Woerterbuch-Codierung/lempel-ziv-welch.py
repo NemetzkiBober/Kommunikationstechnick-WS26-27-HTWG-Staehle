@@ -12,19 +12,30 @@ class lempelZivWelch:
         
         for i in range(len(word)):
             if word[i] not in charL:
-                charL.insert(len(charL),word[i])
+                charL.append(word[i])
         # print(charL)
 
+
         def encode(message, CharL):
-            for i in range(len(message)):
-                Zeichen = message[i]+message[i+1]
-                for j in range(len(CharL)):
-                    if Zeichen == CharL[j]:
-                        print("Vorhanden: ", Zeichen)
-                    else:
-                        CharL.append(Zeichen)
-                        print("Appended: ", Zeichen)
-                    print(CharL)
+
+            iterator = iter(range(len(message)-1))
+            for i in iterator:
+                Zeichen = message[i:]
+                if Zeichen in CharL:
+                    print("Vorhanden: ", Zeichen)
+                    nextIndex=len(Zeichen)
+                    CharL.append(Zeichen+message[i+nextIndex])
+                    next(iterator,None)
+                    print("I: ",i)
+                    print("---------------------------")
+                else:
+                    message[i:-1]
+                    CharL.append(Zeichen)
+                    print("Appended: ", Zeichen)
+                    print("I: ",i)
+                    print("---------------------------")
+                # print(CharL)
+                # print("---------------------------")
         #
         #
         #
