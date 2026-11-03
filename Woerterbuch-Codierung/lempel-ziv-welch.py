@@ -1,3 +1,5 @@
+import sys
+
 class lempelZivWelch:
     def __init__(self):
         TerminalInput = 0
@@ -13,35 +15,51 @@ class lempelZivWelch:
         for i in range(len(word)):
             if word[i] not in charL:
                 charL.append(word[i])
-        # print(charL)
 
 
         def encode(message, CharL):
-
-            iterator = iter(range(len(message)-1))
-            for i in iterator:
-                Zeichen = message[i:]
-                if Zeichen in CharL:
-                    print("Vorhanden: ", Zeichen)
-                    nextIndex=len(Zeichen)
-                    CharL.append(Zeichen+message[i+nextIndex])
-                    next(iterator,None)
-                    print("I: ",i)
-                    print("---------------------------")
+            """
+            Implements LZW encoding strictly using the provided CharL list.
+            Includes a simple, readable print trace without complex formatting logic.
+            """
+            encoded_data = []
+            current_sequence = ""
+            
+            for char in message:
+                combined = current_sequence + char
+                
+                if combined in CharL:
+                    # Sequence exists in the list, extend it
+                    current_sequence = combined
                 else:
-                    message[i:-1]
-                    CharL.append(Zeichen)
-                    print("Appended: ", Zeichen)
-                    print("I: ",i)
-                    print("---------------------------")
-                # print(CharL)
-                # print("---------------------------")
-        #
-        #
-        #
-        # def decode(bitstring,CharL):
-        encode(word,charL)
+                    # Output the list index for the known sequence
+                    code = CharL.index(current_sequence)
+                    encoded_data.append(code)
+                    
+                    # Add new combined sequence to the external state list
+                    CharL.append(combined) 
+                    
+                    # Simple trace output
+                    print(f"Zeichen: {current_sequence: <5} | Code: {code: <3} | Neues Wortbuch-Element: {combined} (Index: {len(CharL)-1})")
+                    
+                    # Reset the current sequence to the unmatched character
+                    current_sequence = char
+                    
+            # Flush the final remaining sequence buffer
+            if current_sequence:
+                code = CharL.index(current_sequence)
+                encoded_data.append(code)
+                print(f"Zeichen: {current_sequence: <5} | Code: {code: <3} | (Ende der Nachricht)")
+                
+            return encoded_data
 
+        # def decode(bitstring,CharL):
+        
+        print("--- LZW Encoding Trace ---")
+        bitstring = encode(word, charL)
+        print("--------------------------")
+        print(f"\nFinaler Bitstring (Codierung): {bitstring}")
+        print(f"Wörterbuchgröße am Ende: {len(charL)}")
 
 
 def main() -> None:
